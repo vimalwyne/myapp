@@ -1,0 +1,55 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "myapp"
+        DOCKER_REGISTRY = "docker.io"           // Change if using Docker Hub or private registry
+        DOCKER_USER = "your-dockerhub-username" // Replace with your Docker Hub username
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'git@github.com:vimalwyne/myapp.git'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build("${IMAGE_NAME}:latest")
+                }
+            }
+        }
+
+        stage('Test in Docker') {
+            steps {
+                script {
+                    docker.image("${IMAGE_NAME}:latest").inside {
+                        sh 'python3 app.py'  // Run a simple test command inside container
+                    }
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry("https://${DOCKER_REGISTRY}", 'dockerhub-credentials-id') {
+                        docker.image("${IMAGE_NAME}:latest").push()
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed. Check the logs.'
+        }
+    }
+}
