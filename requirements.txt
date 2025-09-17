@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic
+requests
+python-multipart
+openai   # only if you're calling OpenAI APIs
+pandas   # only if you're doing text/data processing
+numpy    # optional, if your code uses it
+
