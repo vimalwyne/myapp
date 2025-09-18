@@ -3,8 +3,6 @@ name: Build and Push Docker Image
 on:
   push:
     branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build-and-push:
@@ -18,7 +16,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'  # must specify
+          distribution: 'temurin'
 
       - name: Cache Maven packages
         uses: actions/cache@v3
